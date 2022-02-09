@@ -141,11 +141,13 @@ jobs:
       - name: Build Xray
         run: |
           mkdir -p build_assets
+          go mod tidy -compat=1.17
           go build -v -o build_assets/xray -trimpath -ldflags "-s -w -buildid=" ./main
     
       - name: Build Mips softfloat Xray
         if: matrix.goarch == 'mips' || matrix.goarch == 'mipsle'
         run: |
+          go mod tidy -compat=1.17
           GOMIPS=softfloat go build -v -o build_assets/xray_softfloat -trimpath -ldflags "-s -w -buildid=" ./main
 
       - name: Rename Windows Xray
