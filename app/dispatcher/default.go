@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/XrayR-project/XrayR/common/limiter"
+	"github.com/juju/ratelimit"
 	"github.com/xtls/xray-core/common"
 	"github.com/xtls/xray-core/common/buf"
 	"github.com/xtls/xray-core/common/log"
@@ -26,6 +28,7 @@ import (
 )
 
 var errSniffingTimeout = newError("timeout on sniffing")
+var ipMap sync.Map
 
 type cachedReader struct {
 	sync.Mutex
@@ -88,11 +91,12 @@ func (r *cachedReader) Interrupt() {
 
 // DefaultDispatcher is a default implementation of Dispatcher.
 type DefaultDispatcher struct {
-	ohm    outbound.Manager
-	router routing.Router
-	policy policy.Manager
-	stats  stats.Manager
-	hosts  dns.HostsLookup
+	ohm         outbound.Manager
+	router      routing.Router
+	policy      policy.Manager
+	stats       stats.Manager
+	hosts       dns.HostsLookup
+	Limiter     *limiter.Limiter
 }
 
 func init() {
@@ -113,6 +117,7 @@ func (d *DefaultDispatcher) Init(config *Config, om outbound.Manager, router rou
 	d.router = router
 	d.policy = pm
 	d.stats = sm
+	d.Limiter = limiter.New()
 	if hosts, ok := dc.(dns.HostsLookup); ok {
 		d.hosts = hosts
 	}
@@ -154,6 +159,34 @@ func (d *DefaultDispatcher) getLink(ctx context.Context) (*transport.Link, *tran
 	}
 
 	if user != nil && len(user.Email) > 0 {
+		// Limit 3 devices
+		deviceLimit := 3
+		if deviceLimit > 0 {
+			if _, ok := ipMap.LoadOrStore(sessionInbound.Source.Address.IP().String(), user.Email); !ok {
+				counter := 0
+				ipMap.Range(func(key, value interface{}) bool {
+					counter++
+					return true
+				})
+				if counter > deviceLimit {
+					ipMap.Delete(sessionInbound.Source.Address.IP().String())
+					newError("Devices reach the limit: ", user.Email).AtError().WriteToLog()
+					common.Close(outboundLink.Writer)
+					common.Close(inboundLink.Writer)
+					common.Interrupt(outboundLink.Reader)
+					common.Interrupt(inboundLink.Reader)
+				}
+			}
+		}
+
+		// Limit 3mb/s speed
+		speedlimit := 3145728
+		if speedlimit > 0 {
+			inboundLink.Writer = d.Limiter.RateWriter(inboundLink.Writer, ratelimit.NewBucketWithQuantum(time.Duration(int64(time.Second)), int64(speedlimit), int64(speedlimit)))
+			outboundLink.Writer = d.Limiter.RateWriter(outboundLink.Writer, ratelimit.NewBucketWithQuantum(time.Duration(int64(time.Second)), int64(speedlimit), int64(speedlimit)))
+		}
+
+
 		p := d.policy.ForLevel(user.Level)
 		if p.Stats.UserUplink {
 			name := "user>>>" + user.Email + ">>>traffic>>>uplink"
