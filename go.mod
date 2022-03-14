@@ -3,13 +3,15 @@ module github.com/xtls/xray-core
 go 1.17
 
 require (
+	github.com/XrayR-project/XrayR v0.7.6
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-cmp v0.5.7
 	github.com/gorilla/websocket v1.5.0
+	github.com/juju/ratelimit v1.0.1
 	github.com/lucas-clemente/quic-go v0.25.0
-	github.com/miekg/dns v1.1.46
+	github.com/miekg/dns v1.1.47
 	github.com/pelletier/go-toml v1.9.4
 	github.com/pires/go-proxyproto v0.6.1
 	github.com/refraction-networking/utls v1.0.0
