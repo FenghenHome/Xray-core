@@ -3,12 +3,14 @@ module github.com/xtls/xray-core
 go 1.18
 
 require (
+	github.com/XrayR-project/XrayR v0.8.4
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-cmp v0.5.9
 	github.com/gorilla/websocket v1.5.0
-	github.com/lucas-clemente/quic-go v0.29.0
+	github.com/juju/ratelimit v1.0.2
+	github.com/lucas-clemente/quic-go v0.29.1
 	github.com/marten-seemann/qtls-go1-16 v0.1.5
 	github.com/marten-seemann/qtls-go1-17 v0.1.2
 	github.com/marten-seemann/qtls-go1-18 v0.1.2
