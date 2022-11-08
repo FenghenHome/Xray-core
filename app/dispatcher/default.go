@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/XrayR-project/XrayR/common/limiter"
-	"github.com/juju/ratelimit"
+	"golang.org/x/time/rate"
 	"github.com/xtls/xray-core/common"
 	"github.com/xtls/xray-core/common/buf"
 	"github.com/xtls/xray-core/common/log"
@@ -252,8 +252,8 @@ func (d *DefaultDispatcher) getLink(ctx context.Context, network net.Network, sn
 		// Limit 3mb/s speed
 		speedlimit := 3145728
 		if speedlimit > 0 {
-			inboundLink.Writer = d.Limiter.RateWriter(inboundLink.Writer, ratelimit.NewBucketWithQuantum(time.Duration(int64(time.Second)), int64(speedlimit), int64(speedlimit)))
-			outboundLink.Writer = d.Limiter.RateWriter(outboundLink.Writer, ratelimit.NewBucketWithQuantum(time.Duration(int64(time.Second)), int64(speedlimit), int64(speedlimit)))
+			inboundLink.Writer = d.Limiter.RateWriter(inboundLink.Writer, rate.NewLimiter(rate.Limit(speedlimit), int(speedlimit)))
+			outboundLink.Writer = d.Limiter.RateWriter(outboundLink.Writer, rate.NewLimiter(rate.Limit(speedlimit), int(speedlimit)))
 		}
 
 
