@@ -3,12 +3,13 @@ module github.com/xtls/xray-core
 go 1.19
 
 require (
+	github.com/XrayR-project/XrayR v0.8.6
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-cmp v0.5.9
 	github.com/gorilla/websocket v1.5.0
-	github.com/lucas-clemente/quic-go v0.30.0
+	github.com/lucas-clemente/quic-go v0.31.0
 	github.com/marten-seemann/qtls-go1-18 v0.1.3
 	github.com/miekg/dns v1.1.50
 	github.com/pelletier/go-toml v1.9.5
@@ -25,6 +26,7 @@ require (
 	golang.org/x/net v0.2.0
 	golang.org/x/sync v0.1.0
 	golang.org/x/sys v0.2.0
+	golang.org/x/time v0.0.0-20220609170525-579cf78fd858
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
 	h12.io/socks v1.0.3
@@ -32,9 +34,12 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-metro v0.0.0-20211217172704-adc40b04c140 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
+	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/google/pprof v0.0.0-20221112000123-84eb7ad69597 // indirect
 	github.com/klauspost/compress v1.15.12 // indirect
